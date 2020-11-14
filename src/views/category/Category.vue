@@ -21,6 +21,7 @@
       <button @click="btnClick">自由</button>
 <!--      2.必须设置click:true,div才能监听-->
       <div @click="divClick">民主</div>
+      <div>test</div>
     </ul>
   </div>
 
