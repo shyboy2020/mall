@@ -1,7 +1,7 @@
 <template>
-  <div class="tar-control">
-    <div class="tar-control-item" v-for="(item,index) in titles"
-    :class="{active: index === currentIndex}" @click="tarClick(index)">
+  <div class="tab-control">
+    <div class="tab-control-item" v-for="(item,index) in titles"
+    :class="{active: index === currentIndex}" @click="tabClick(index)">
       <span>{{item}}</span>
     </div>
   </div>
@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: "TarControl",
+  name: "TabControl",
   props:{
     titles:{
       type:Array,
@@ -24,9 +24,9 @@ export default {
     }
   },
   methods:{
-    tarClick(index){
+    tabClick(index){
       this.currentIndex = index
-      this.$emit('tarClick',index)
+      this.$emit('tabClick',index)
     }
   }
 }
@@ -41,7 +41,7 @@ export default {
     border-bottom: 3px solid var(--color-tint);
   }
 
-  .tar-control {
+  .tab-control {
     display: flex;
     text-align: center;
     font-size: 15px;
@@ -50,10 +50,10 @@ export default {
     background-color: white;
   }
 
-  .tar-control-item {
+  .tab-control-item {
     flex: 1;
   }
-  .tar-control-item span {
+  .tab-control-item span {
     padding: 5px;
   }
 </style>

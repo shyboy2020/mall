@@ -52,7 +52,6 @@ export default {
     })
     this.scroll.on('pullingUp',() => {
       console.log('上拉');
-
     })
   },
   methods:{
@@ -61,7 +60,7 @@ export default {
     },
     divClick(){
       console.log('div');
-    }
+    },
   }
 }
 </script>

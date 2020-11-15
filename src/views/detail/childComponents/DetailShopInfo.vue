@@ -41,6 +41,9 @@
     props: {
 		  shop: {
 		    type: Object
+      },
+      default(){
+		    return {}
       }
     },
     filters: {
