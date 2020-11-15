@@ -30,7 +30,7 @@ import HomeSwiper from "@/views/home/childComponents/HomeSwiper";
 import RecommendView from "@/views/home/childComponents/RecommendView";
 import FeatureView from "@/views/home/childComponents/FeatureView";
 
-import {getHomeMultidata,getHomeGoods} from "../../../network/home";
+import {getHomeMultidata,getHomeGoods} from "../../network/home";
 
 
 
@@ -65,11 +65,18 @@ export default {
     }
   },
   created() {
+    //1.请求多个数据
     this.getHomeMultidata()
+    //2.请求商品数据
     this.getHomeGoods('pop')
     this.getHomeGoods('new')
     this.getHomeGoods('sell')
-
+  },
+  mounted() {
+    //3.监听item中图片加载完成
+    this.$bus.$on('itemImageLoad',() => {
+      this.$refs.scroll.refresh()
+    })
   },
   methods:{
     /**
@@ -117,9 +124,9 @@ export default {
         this.goods[type].list.push(...res.data.list)
         this.goods[type].page += 1
 
-
+        //监听下拉加载完成
         this.$refs.scroll.finishPullUp()
-        this.$refs.scroll.scroll.refresh()
+        // this.$refs.scroll.refresh()
       })
     }
 
