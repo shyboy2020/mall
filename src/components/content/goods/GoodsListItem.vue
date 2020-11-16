@@ -1,6 +1,6 @@
 <template>
   <div class="goods-item" @click="itemClick">
-    <img :src="goodsItem.show.img" alt="" @load="imageLoad">
+    <img :src="showImage" alt="" @load="imageLoad">
     <div class="goods-info">
       <p >{{goodsItem.title}}</p>
       <span class="price">￥{{goodsItem.price}}</span>
@@ -20,10 +20,25 @@ export default {
       }
     }
   },
+  computed:{
+    showImage(){
+      return this.goodsItem.image || this.goodsItem.show.img
+    }
+  },
   methods:{
     imageLoad(){
-      //事件总线，绕过GoodsList组件传给Home组件
-      this.$bus.$emit('itemImageLoad')
+      //事件总线$bus，绕过GoodsList组件传给Home组件
+      //？出现问题 详情页图片加载的时候，首页也重新加载了，这是不需要的
+      //第一种方法：根据路由，判断是首页还是详细页需要图片加载
+      // if (this.$route.path.indexOf('/home')){
+      //   this.$bus.$emit('itemImageLoad')
+      // } else if (this.$route.path.indexOf('/detail')){
+      //   this.$bus.$emit('detailItemImageLoad')
+      // }
+
+      //第二种方法，在detail,home组件中设置监听
+      this.$bus.$emit('itemImgLoad')
+
     },
     itemClick(){
       this.$router.push('/detail/' + this.goodsItem.iid)

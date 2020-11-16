@@ -7,6 +7,8 @@
       <detail-shop-info :shop="shop"></detail-shop-info>
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"></detail-goods-info>
       <detail-param-info :param-info="paramInfo"></detail-param-info>
+      <detail-comment-info :comment-info="commentInfo"></detail-comment-info>
+      <goods-list :goods="recommends"></goods-list>
     </scroll>
   </div>
 </template>
@@ -18,10 +20,14 @@ import DetailBaseInfo from "./childComponents/DetailBaseInfo";
 import DetailShopInfo from "./childComponents/DetailShopInfo";
 import DetailGoodsInfo from "./childComponents/DetailGoodsInfo";
 import DetailParamInfo from "./childComponents/DetailParamInfo";
+import DetailCommentInfo from "./childComponents/DetailCommentInfo";
 
 import Scroll from "../../components/common/scroll/Scroll";
+import GoodsList from "../../components/content/goods/GoodsList";
 
-import {getDetail,Goods,Shop,GoodsParam} from "../../network/detail";
+import {getDetail,Goods,Shop,GoodsParam,getRecommend} from "../../network/detail";
+import {ItemImgListenerMinxin} from '../../common/mixin'
+import {debounce} from "../../common/utils";
 
 export default {
   name: "Detail",
@@ -31,9 +37,12 @@ export default {
     DetailBaseInfo,
     DetailShopInfo,
     Scroll,
+    GoodsList,
     DetailGoodsInfo,
-    DetailParamInfo
+    DetailParamInfo,
+    DetailCommentInfo,
   },
+  mixins:[ItemImgListenerMinxin],
   data(){
     return {
       iid:null,
@@ -41,7 +50,9 @@ export default {
       goods:{},
       shop:{},
       detailInfo:{},
-      paramInfo:{}
+      paramInfo:{},
+      commentInfo:{},
+      recommends:[],
     }
   },
   created() {
@@ -51,7 +62,7 @@ export default {
     //根据iid请求详细数据
     getDetail(this.iid).then(res => {
       //获取顶部轮播图数据
-      console.log(res);
+      // console.log(res);
       const data = res.result
       this.topImages = data.itemInfo.topImages
 
@@ -67,7 +78,22 @@ export default {
 
       this.paramInfo = new GoodsParam(data.itemParams.info,data.itemParams.rule)
 
+      //获取评论信息
+      if (data.rate.cRate != 0){
+        this.commentInfo = data.rate.list[0]
+      }
     })
+
+    //请求推荐数据
+    getRecommend().then(res => {
+      console.log(res);
+      this.recommends = res.data.list
+    })
+  },
+  mounted() {
+  },
+  destroyed() {
+    this.$bus.$off('itemImgLoad',this.itemImgListener)
   },
   methods:{
     imageLoad(){

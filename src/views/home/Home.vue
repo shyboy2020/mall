@@ -35,6 +35,7 @@ import RecommendView from "@/views/home/childComponents/RecommendView";
 import FeatureView from "@/views/home/childComponents/FeatureView";
 
 import {getHomeMultidata,getHomeGoods} from "../../network/home";
+import {ItemImgListenerMinxin} from '../../common/mixin'
 import {debounce} from "../../common/utils";
 
 
@@ -50,6 +51,7 @@ export default {
     Scroll,
     BackTop
   },
+  mixins:[ItemImgListenerMinxin],
   data(){
     return {
       banners:[],
@@ -63,7 +65,7 @@ export default {
       isShowBackTop:true,
       tabOffsetTop:0,
       isTabFixed:false,
-      saveY:0
+      saveY:0,
     }
   },
   computed:{
@@ -80,11 +82,6 @@ export default {
     this.getHomeGoods('sell')
   },
   mounted() {
-    //监听item中图片加载完成
-    const refresh = debounce(this.$refs.scroll.refresh,500)
-    this.$bus.$on('itemImageLoad',() => {
-      refresh()
-    })
   },
   activated() {
     this.$refs.scroll.scrollTo(0,this.saveY,0)
