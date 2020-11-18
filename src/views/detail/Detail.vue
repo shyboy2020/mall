@@ -1,15 +1,16 @@
 <template>
   <div id="detail">
-    <detail-nav-bar class="detail-nav"></detail-nav-bar>
-    <scroll class="content" ref="scroll">
+    <detail-nav-bar class="detail-nav" @titleClick="titleClick"></detail-nav-bar>
+    <scroll class="content" ref="scroll"  :probe-type="3" @positionScroll="positionScroll">
       <detail-swiper :top-images="topImages"></detail-swiper>
       <detail-base-info :goods="goods"></detail-base-info>
-      <detail-shop-info :shop="shop"></detail-shop-info>
+      <detail-shop-info :shop="shop" ></detail-shop-info>
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"></detail-goods-info>
-      <detail-param-info :param-info="paramInfo"></detail-param-info>
-      <detail-comment-info :comment-info="commentInfo"></detail-comment-info>
-      <goods-list :goods="recommends"></goods-list>
+      <detail-param-info ref="param" :param-info="paramInfo"></detail-param-info>
+      <detail-comment-info ref="comment" :comment-info="commentInfo"></detail-comment-info>
+      <goods-list ref="recommend" :goods="recommends"></goods-list>
     </scroll>
+    <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
   </div>
 </template>
 
@@ -21,12 +22,13 @@ import DetailShopInfo from "./childComponents/DetailShopInfo";
 import DetailGoodsInfo from "./childComponents/DetailGoodsInfo";
 import DetailParamInfo from "./childComponents/DetailParamInfo";
 import DetailCommentInfo from "./childComponents/DetailCommentInfo";
+import BackTop from '@/components/content/backTop/BackTop'
 
 import Scroll from "../../components/common/scroll/Scroll";
 import GoodsList from "../../components/content/goods/GoodsList";
 
 import {getDetail,Goods,Shop,GoodsParam,getRecommend} from "../../network/detail";
-import {ItemImgListenerMinxin} from '../../common/mixin'
+import {ItemImgListenerMinxin,BBackTop} from '../../common/mixin'
 import {debounce} from "../../common/utils";
 
 export default {
@@ -41,8 +43,9 @@ export default {
     DetailGoodsInfo,
     DetailParamInfo,
     DetailCommentInfo,
+    BackTop
   },
-  mixins:[ItemImgListenerMinxin],
+  mixins:[ItemImgListenerMinxin,BBackTop],
   data(){
     return {
       iid:null,
@@ -53,6 +56,7 @@ export default {
       paramInfo:{},
       commentInfo:{},
       recommends:[],
+      themeTopYs:[]
     }
   },
   created() {
@@ -82,6 +86,16 @@ export default {
       if (data.rate.cRate != 0){
         this.commentInfo = data.rate.list[0]
       }
+      //获取完所有详细数据后的下一帧，将参数，评论的相对位置传给themeTopYs
+      // this.$nextTick(() => {
+      //   //DOM已经渲染完成，但是图片没有加载完成，导致获取的相对位置有误差
+      //   // this.themeTopYs = []
+      //   this.themeTopYs.push(0)
+      //   this.themeTopYs.push(this.$refs.param.$el.offsetTop)
+      //   this.themeTopYs.push(this.$refs.comment.$el.offsetTop)
+      //   this.themeTopYs.push(this.$refs.recommend.$el.offsetTop)
+      //   // console.log(this.themeTopYs);
+      // })
     })
 
     //请求推荐数据
@@ -91,6 +105,7 @@ export default {
     })
   },
   mounted() {
+
   },
   destroyed() {
     this.$bus.$off('itemImgLoad',this.itemImgListener)
@@ -98,6 +113,33 @@ export default {
   methods:{
     imageLoad(){
       this.$refs.scroll.refresh()
+      this.themeTopYs = []
+      this.themeTopYs.push(0)
+      this.themeTopYs.push(this.$refs.param.$el.offsetTop)
+      this.themeTopYs.push(this.$refs.comment.$el.offsetTop)
+      this.themeTopYs.push(this.$refs.recommend.$el.offsetTop)
+      console.log(this.themeTopYs);
+    },
+    titleClick(index){
+      // console.log(index);
+      // 1.用switch方法
+      // switch (index){
+      //   case 0:
+      //     this.$refs.scroll.scrollTo(0,0,300)
+      //     break
+      //   case 1:
+      //     this.$refs.scroll.scrollTo(0,-this.$refs.param.$el.offsetTop,300)
+      //     console.log(this.$refs.param.$el.offsetTop);
+      //     break
+      //   case 2:
+      //     this.$refs.scroll.scrollTo(0,-this.$refs.comment.$el.offsetTop,300)
+      //     console.log(this.$refs.comment.$el.offsetTop);
+      //     break
+      //   case 3:
+      //     this.$refs.scroll.scrollTo(0,-this.$refs.recommend.$el.offsetTop,300)
+      //     console.log(this.$refs.recommend.$el.offsetTop);
+      // }
+      this.$refs.scroll.scrollTo(0,-this.themeTopYs[index],300)
     }
   }
 }

@@ -35,8 +35,9 @@ import RecommendView from "@/views/home/childComponents/RecommendView";
 import FeatureView from "@/views/home/childComponents/FeatureView";
 
 import {getHomeMultidata,getHomeGoods} from "../../network/home";
-import {ItemImgListenerMinxin} from '../../common/mixin'
+import {ItemImgListenerMinxin,BBackTop} from '../../common/mixin'
 import {debounce} from "../../common/utils";
+
 
 
 export default {
@@ -51,7 +52,7 @@ export default {
     Scroll,
     BackTop
   },
-  mixins:[ItemImgListenerMinxin],
+  mixins:[ItemImgListenerMinxin,BBackTop],
   data(){
     return {
       banners:[],
@@ -62,8 +63,8 @@ export default {
         'sell':{page:0 ,list:[]}
       },
       currentType:'pop',
-      isShowBackTop:true,
-      tabOffsetTop:0,
+      // isShowBackTop:true,
+      // tabOffsetTop:0,
       isTabFixed:false,
       saveY:0,
     }
@@ -110,16 +111,16 @@ export default {
       this.$refs.tabControl1.currentIndex = index
       this.$refs.tabControl2.currentIndex = index
     },
-    backClick() {
-      this.$refs.scroll.scrollTo(0,0,500)
-    },
-    positionScroll(position){
-      // console.log(position)
-      //1.判断BackTop是否显示
-      this.isShowBackTop = (-position.y) > 1000
-      //2.决定TabControl是否吸顶
-      this.isTabFixed = (-position.y) > this.tabOffsetTop
-    },
+    // backClick() {
+    //   this.$refs.scroll.scrollTo(0,0,500)
+    // },
+    // positionScroll(position){
+    //   // console.log(position)
+    //   //1.判断BackTop是否显示
+    //   this.isShowBackTop = (-position.y) > 1000
+    //   //2.决定TabControl是否吸顶
+    //   this.isTabFixed = (-position.y) > this.tabOffsetTop
+    // },
     loadMore(){
       // console.log('上拉');
       this.getHomeGoods(this.currentType)

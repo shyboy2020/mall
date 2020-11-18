@@ -19,6 +19,27 @@ export const ItemImgListenerMinxin = {
       refresh()
     }
     this.$bus.$on('itemImgLoad',this.itemImgListener)
-    console.log('mixin ..');
+  }
+}
+
+//返回顶部
+export const BBackTop = {
+  data(){
+    return {
+      isShowBackTop:true,
+      tabOffsetTop:0,
+    }
+  },
+  methods:{
+    backClick() {
+      this.$refs.scroll.scrollTo(0,0,500)
+    },
+    positionScroll(position){
+      // console.log(position)
+      //1.判断BackTop是否显示
+      this.isShowBackTop = (-position.y) > 1000
+      //2.决定TabControl是否吸顶
+      this.isTabFixed = (-position.y) > this.tabOffsetTop
+    },
   }
 }

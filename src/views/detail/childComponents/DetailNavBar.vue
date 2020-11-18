@@ -32,12 +32,14 @@ export default {
   methods:{
     titelClick(index){
       this.currentIndex = index
+      this.$emit('titleClick',index)
     },
     backClick() {
-      this.$router.back()
+      this.$router.go(-1)
     }
-  }
+  },
 }
+
 </script>
 
 <style scoped>
