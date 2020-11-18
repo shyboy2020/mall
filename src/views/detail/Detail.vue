@@ -118,7 +118,7 @@ export default {
       this.themeTopYs.push(this.$refs.param.$el.offsetTop)
       this.themeTopYs.push(this.$refs.comment.$el.offsetTop)
       this.themeTopYs.push(this.$refs.recommend.$el.offsetTop)
-      console.log(this.themeTopYs);
+      console.log(this.themeTopYs)
     },
     titleClick(index){
       // console.log(index);
