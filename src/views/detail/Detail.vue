@@ -1,6 +1,6 @@
 <template>
   <div id="detail">
-    <detail-nav-bar class="detail-nav" @titleClick="titleClick"></detail-nav-bar>
+    <detail-nav-bar class="detail-nav" @titleClick="titleClick" ref="nav"></detail-nav-bar>
     <scroll class="content" ref="scroll"  :probe-type="3" @positionScroll="positionScroll">
       <detail-swiper :top-images="topImages"></detail-swiper>
       <detail-base-info :goods="goods"></detail-base-info>
@@ -56,7 +56,8 @@ export default {
       paramInfo:{},
       commentInfo:{},
       recommends:[],
-      themeTopYs:[]
+      themeTopYs:[],
+      currentIndex:0
     }
   },
   created() {
@@ -100,7 +101,7 @@ export default {
 
     //请求推荐数据
     getRecommend().then(res => {
-      console.log(res);
+      // console.log(res);
       this.recommends = res.data.list
     })
   },
@@ -118,7 +119,7 @@ export default {
       this.themeTopYs.push(this.$refs.param.$el.offsetTop)
       this.themeTopYs.push(this.$refs.comment.$el.offsetTop)
       this.themeTopYs.push(this.$refs.recommend.$el.offsetTop)
-      console.log(this.themeTopYs)
+      // console.log(this.themeTopYs)
     },
     titleClick(index){
       // console.log(index);
@@ -140,6 +141,26 @@ export default {
       //     console.log(this.$refs.recommend.$el.offsetTop);
       // }
       this.$refs.scroll.scrollTo(0,-this.themeTopYs[index],300)
+    },
+    positionScroll(position) {
+      //1.获取Y值
+      // console.log(position);
+      const positionY = -position.y
+      //2.positionY和主题中的值进行比较
+      //[0,this.$refs.param.$el.offsetTop,this.$refs.comment.$el.offsetTop,this.$refs.recommend.$el.offsetTop]
+      //positionY在0-参数之间,则index = 0
+      //positionY在参数-评论之间,则index = 1
+      //positionY在评论-详情之间,则index = 2
+      //positionY在详情之后,则index = 3
+      let length = this.themeTopYs.length
+      for (let i = 0;i < length;i++){
+        if ( (this.currentIndex !== i) && ((i < length - 1 && positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1])
+                || (i === length - 1 && positionY >= this.themeTopYs[i]))){
+          this.currentIndex = i
+          // console.log(this.currentIndex);
+          this.$refs.nav.currentIndex = this.currentIndex
+        }
+      }
     }
   }
 }
