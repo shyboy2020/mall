@@ -28,14 +28,14 @@ import NavBar from "@/components/common/navbar/NavBar";
 import TabControl from "@/components/content/tabControl/TabControl";
 import GoodsList from "@/components/content/goods/GoodsList";
 import Scroll from "@/components/common/scroll/Scroll";
-import BackTop from "@/components/content/backTop/BackTop";
+
 
 import HomeSwiper from "@/views/home/childComponents/HomeSwiper";
 import RecommendView from "@/views/home/childComponents/RecommendView";
 import FeatureView from "@/views/home/childComponents/FeatureView";
 
 import {getHomeMultidata,getHomeGoods} from "../../network/home";
-import {ItemImgListenerMinxin,BBackTop} from '../../common/mixin'
+import {ItemImgListenerMixin,BackTopMixin} from '../../common/mixin'
 import {debounce} from "../../common/utils";
 
 
@@ -50,9 +50,8 @@ export default {
     RecommendView,
     FeatureView,
     Scroll,
-    BackTop
   },
-  mixins:[ItemImgListenerMinxin,BBackTop],
+  mixins:[ItemImgListenerMixin,BackTopMixin],
   data(){
     return {
       banners:[],
@@ -63,8 +62,7 @@ export default {
         'sell':{page:0 ,list:[]}
       },
       currentType:'pop',
-      // isShowBackTop:true,
-      // tabOffsetTop:0,
+      tabOffsetTop:0,
       isTabFixed:false,
       saveY:0,
     }
@@ -111,16 +109,14 @@ export default {
       this.$refs.tabControl1.currentIndex = index
       this.$refs.tabControl2.currentIndex = index
     },
-    // backClick() {
-    //   this.$refs.scroll.scrollTo(0,0,500)
-    // },
-    // positionScroll(position){
-    //   // console.log(position)
-    //   //1.判断BackTop是否显示
-    //   this.isShowBackTop = (-position.y) > 1000
-    //   //2.决定TabControl是否吸顶
-    //   this.isTabFixed = (-position.y) > this.tabOffsetTop
-    // },
+
+    positionScroll(position){
+      // console.log(position)
+      //1.判断BackTop是否显示
+      this.isShowBackTop = (-position.y) > 1000
+      //2.决定TabControl是否吸顶
+      this.isTabFixed = (-position.y) > this.tabOffsetTop
+    },
     loadMore(){
       // console.log('上拉');
       this.getHomeGoods(this.currentType)

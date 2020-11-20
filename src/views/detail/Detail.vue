@@ -11,6 +11,8 @@
       <goods-list ref="recommend" :goods="recommends"></goods-list>
     </scroll>
     <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
+    <detail-bottom-bar @cartClick="addCart"></detail-bottom-bar>
+
   </div>
 </template>
 
@@ -22,13 +24,13 @@ import DetailShopInfo from "./childComponents/DetailShopInfo";
 import DetailGoodsInfo from "./childComponents/DetailGoodsInfo";
 import DetailParamInfo from "./childComponents/DetailParamInfo";
 import DetailCommentInfo from "./childComponents/DetailCommentInfo";
-import BackTop from '@/components/content/backTop/BackTop'
+import DetailBottomBar from "./childComponents/DetailBottomBar";
 
 import Scroll from "../../components/common/scroll/Scroll";
 import GoodsList from "../../components/content/goods/GoodsList";
 
 import {getDetail,Goods,Shop,GoodsParam,getRecommend} from "../../network/detail";
-import {ItemImgListenerMinxin,BBackTop} from '../../common/mixin'
+import {ItemImgListenerMixin,BackTopMixin} from '../../common/mixin'
 import {debounce} from "../../common/utils";
 
 export default {
@@ -43,9 +45,9 @@ export default {
     DetailGoodsInfo,
     DetailParamInfo,
     DetailCommentInfo,
-    BackTop
+    DetailBottomBar,
   },
-  mixins:[ItemImgListenerMinxin,BBackTop],
+  mixins:[ItemImgListenerMixin,BackTopMixin],
   data(){
     return {
       iid:null,
@@ -57,7 +59,8 @@ export default {
       commentInfo:{},
       recommends:[],
       themeTopYs:[],
-      currentIndex:0
+      currentIndex:0,
+      tabOffsetTop:0,
     }
   },
   created() {
@@ -67,7 +70,7 @@ export default {
     //根据iid请求详细数据
     getDetail(this.iid).then(res => {
       //获取顶部轮播图数据
-      // console.log(res);
+      console.log(res);
       const data = res.result
       this.topImages = data.itemInfo.topImages
 
@@ -119,6 +122,7 @@ export default {
       this.themeTopYs.push(this.$refs.param.$el.offsetTop)
       this.themeTopYs.push(this.$refs.comment.$el.offsetTop)
       this.themeTopYs.push(this.$refs.recommend.$el.offsetTop)
+      this.themeTopYs.push(Number.MAX_VALUE)
       // console.log(this.themeTopYs)
     },
     titleClick(index){
@@ -152,15 +156,41 @@ export default {
       //positionY在参数-评论之间,则index = 1
       //positionY在评论-详情之间,则index = 2
       //positionY在详情之后,则index = 3
+      // let length = this.themeTopYs.length
+      // for (let i = 0;i < length;i++){
+      //   if ( (this.currentIndex !== i) && ((i < length - 1 && positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1])
+      //           || (i === length - 1 && positionY >= this.themeTopYs[i]))){
+      //     this.currentIndex = i
+      //     // console.log(this.currentIndex);
+      //     this.$refs.nav.currentIndex = this.currentIndex
+      //   }
+      // }
+      //上面是普通做法，下面是hack做法
+      //[0,...,this.$refs.recommend.$el.offsetTop,加一个Number.MAX_VALUE]
       let length = this.themeTopYs.length
-      for (let i = 0;i < length;i++){
-        if ( (this.currentIndex !== i) && ((i < length - 1 && positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1])
-                || (i === length - 1 && positionY >= this.themeTopYs[i]))){
+      for (let i = 0 ; i < length - 1 ;i++){
+        if (this.currentIndex !== i && (positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1])){
           this.currentIndex = i
           // console.log(this.currentIndex);
           this.$refs.nav.currentIndex = this.currentIndex
         }
       }
+
+      this.isShowBackTop = (-position.y) > 1000
+    },
+    addCart(){
+      console.log('监听点击');
+      //1.获取购物车所需要展示的数据
+      const good = {}
+      good.image = this.topImages[0]
+      good.title = this.goods.title
+      good.desc = this.goods.desc
+      good.price = this.goods.realPrice
+      good.iid = this.iid
+
+      //2.将商品添加到购物车中
+      // this.$store.cartList.push(good)
+      this.$store.commit('addCart',good)
     }
   }
 }
@@ -181,6 +211,6 @@ export default {
   }
 
   .content {
-    height: calc(100% - 44px);
+    height: calc(100% - 93px);
   }
 </style>

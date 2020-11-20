@@ -1,6 +1,7 @@
 import {debounce} from "./utils";
+import BackTop from "@/components/content/backTop/BackTop";
 
-export const ItemImgListenerMinxin = {
+export const ItemImgListenerMixin = {
   methods:{
 
   },
@@ -23,23 +24,18 @@ export const ItemImgListenerMinxin = {
 }
 
 //返回顶部
-export const BBackTop = {
+export const BackTopMixin = {
+  components: {
+    BackTop
+  },
   data(){
     return {
-      isShowBackTop:true,
-      tabOffsetTop:0,
+      isShowBackTop:false,
     }
   },
-  methods:{
+  methods: {
     backClick() {
       this.$refs.scroll.scrollTo(0,0,500)
-    },
-    positionScroll(position){
-      // console.log(position)
-      //1.判断BackTop是否显示
-      this.isShowBackTop = (-position.y) > 1000
-      //2.决定TabControl是否吸顶
-      this.isTabFixed = (-position.y) > this.tabOffsetTop
-    },
+    }
   }
 }
