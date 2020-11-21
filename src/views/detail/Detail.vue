@@ -70,7 +70,7 @@ export default {
     //根据iid请求详细数据
     getDetail(this.iid).then(res => {
       //获取顶部轮播图数据
-      console.log(res);
+      // console.log(res);
       const data = res.result
       this.topImages = data.itemInfo.topImages
 
@@ -179,7 +179,7 @@ export default {
       this.isShowBackTop = (-position.y) > 1000
     },
     addCart(){
-      console.log('监听点击');
+      // console.log('监听点击');
       //1.获取购物车所需要展示的数据
       const good = {}
       good.image = this.topImages[0]
@@ -190,7 +190,8 @@ export default {
 
       //2.将商品添加到购物车中
       // this.$store.cartList.push(good)
-      this.$store.commit('addCart',good)
+      // this.$store.commit('addCart',good)
+        this.$store.dispatch('addCart',good)
     }
   }
 }

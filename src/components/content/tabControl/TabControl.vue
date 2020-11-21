@@ -35,10 +35,10 @@ export default {
 <style scoped>
 
   .active {
-    color: var(--color-high-text)
+    color: #42b983;
   }
   .active span {
-    border-bottom: 3px solid var(--color-tint);
+    border-bottom: 3px solid #42b983;
   }
 
   .tab-control {
