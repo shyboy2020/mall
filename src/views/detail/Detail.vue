@@ -12,7 +12,7 @@
     </scroll>
     <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
     <detail-bottom-bar @cartClick="addCart"></detail-bottom-bar>
-
+    <toast :message="message" :show="show"></toast>
   </div>
 </template>
 
@@ -28,9 +28,11 @@ import DetailBottomBar from "./childComponents/DetailBottomBar";
 
 import Scroll from "../../components/common/scroll/Scroll";
 import GoodsList from "../../components/content/goods/GoodsList";
+import Toast from '../../components/common/toast/Toast'
 
 import {getDetail,Goods,Shop,GoodsParam,getRecommend} from "../../network/detail";
 import {ItemImgListenerMixin,BackTopMixin} from '../../common/mixin'
+import {mapActions} from 'vuex'
 import {debounce} from "../../common/utils";
 
 export default {
@@ -42,6 +44,7 @@ export default {
     DetailShopInfo,
     Scroll,
     GoodsList,
+    Toast,
     DetailGoodsInfo,
     DetailParamInfo,
     DetailCommentInfo,
@@ -61,6 +64,8 @@ export default {
       themeTopYs:[],
       currentIndex:0,
       tabOffsetTop:0,
+      message:'',
+      show:false
     }
   },
   created() {
@@ -115,6 +120,9 @@ export default {
     this.$bus.$off('itemImgLoad',this.itemImgListener)
   },
   methods:{
+    ...mapActions({
+      addC:'addCart'
+    }),
     imageLoad(){
       this.$refs.scroll.refresh()
       this.themeTopYs = []
@@ -191,7 +199,23 @@ export default {
       //2.将商品添加到购物车中
       // this.$store.cartList.push(good)
       // this.$store.commit('addCart',good)
-        this.$store.dispatch('addCart',good)
+
+      //原生方法
+      // this.$store.dispatch('addCart',good).then(res => {
+      //   console.log(res);
+      // })
+      //用mapactions映射方法
+      this.addC(good).then(res => {
+        this.message = res
+        this.show = true
+
+        setTimeout(() => {
+          this.show = false
+        },1500)
+        console.log(res);
+      })
+      //3.提示  添加到购物车成功 用promise的then
+
     }
   }
 }

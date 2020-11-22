@@ -28,7 +28,7 @@
     },
     computed:{
       //两种写法
-      // ...mapGetters(["cartLength"])
+      // ...mapGetters(["cartLength"])  映射getters中的属性
       ...mapGetters({
         length:'cartLength'
       })
