@@ -6,7 +6,7 @@
             <span>全选</span>
         </div>
         <span class="price">合计:{{totalPrice}}</span>
-        <div class="calculate">
+        <div class="calculate" @click="calcClick">
             结算:{{checkLength}}
         </div>
     </div>
@@ -42,6 +42,11 @@
                 if (this.isCheckAll){
                     this.cartList.map(item => item.checked = false)
                 } else {this.cartList.map(item => item.checked = true)}
+            },
+            calcClick(){
+                if (!this.checkLength){
+                    this.$toast.show('请先添加商品！！')
+                }
             }
         }
     }

@@ -12,7 +12,7 @@
     </scroll>
     <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
     <detail-bottom-bar @cartClick="addCart"></detail-bottom-bar>
-    <toast :message="message" :show="show"></toast>
+<!--    <toast :message="message" :show="show"></toast>-->
   </div>
 </template>
 
@@ -44,7 +44,7 @@ export default {
     DetailShopInfo,
     Scroll,
     GoodsList,
-    Toast,
+    // Toast,
     DetailGoodsInfo,
     DetailParamInfo,
     DetailCommentInfo,
@@ -64,8 +64,8 @@ export default {
       themeTopYs:[],
       currentIndex:0,
       tabOffsetTop:0,
-      message:'',
-      show:false
+      // message:'',
+      // show:false
     }
   },
   created() {
@@ -206,13 +206,14 @@ export default {
       // })
       //用mapactions映射方法
       this.addC(good).then(res => {
-        this.message = res
-        this.show = true
-
-        setTimeout(() => {
-          this.show = false
-        },1500)
-        console.log(res);
+        // this.message = res
+        // this.show = true
+        //
+        // setTimeout(() => {
+        //   this.show = false
+        // },1500)
+        // console.log(res);
+        this.$toast.show(res)
       })
       //3.提示  添加到购物车成功 用promise的then
 
